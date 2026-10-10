@@ -13,27 +13,21 @@ graph TB
     manager --> program
 ```
 
-
-
-The configuration file will be a single map link this 
+The configuration file will be a single map link this
 
 ```json
 {
-    "dir": {
+    "dir_map": {
             "~/utils/bin": "~/.local/bin",
         "~/utils/service": "~/.config/systemd/user"
     },
-    "file": {
+    "file_map": {
         "old_name": "new_name"
     }
 }
 ```
 
-
-
 ## Steps
-
-
 
 - Edit the configuraion file
 
@@ -46,8 +40,6 @@ The configuration file will be a single map link this
 - construct new manager based on linkButtons
 
 - User modify link status then `enter` for make real changes
-
-
 
 As there is always some link share the source dir and dst dir, so manage them as group will be faster.
 

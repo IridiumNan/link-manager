@@ -68,11 +68,15 @@ func (m *ButtonMgr) Next() {
 //
 // if curr out of range, it will return empty string
 func (m *ButtonMgr) CheckBox() string {
-	if m.curr >= len(m.buttons) {
+	return m.checkBox(m.curr)
+}
+
+func (m *ButtonMgr) checkBox(idx int) string {
+	if idx >= len(m.buttons) || idx < 0 {
 		return ""
 	}
 
-	b := m.buttons[m.curr]
+	b := m.buttons[idx]
 	// default mark is [StatusNone]
 	mark := "?"
 	switch b.Status() {
@@ -83,6 +87,20 @@ func (m *ButtonMgr) CheckBox() string {
 	}
 
 	return fmt.Sprintf("[%v] %s\n", mark, b.String())
+}
+
+// String is the implemnt for [models.Name]
+// return all [ButtonMgr.checkBox]
+func (m *ButtonMgr) String() string {
+	var s strings.Builder
+
+	s.Grow(1 << 8)
+
+	for i := range m.buttons {
+		s.WriteString(m.checkBox(i))
+	}
+
+	return s.String()
 }
 
 // Sync change current button status
@@ -135,6 +153,6 @@ func NewButtonMgr(buttons []models.NameButtonOperator) *ButtonMgr {
 }
 
 // SetVerbose the verbose msg collection
-func (m *ButtonMgr) SetVerbose(status bool) {
-	m.verbose = status
+func (m *ButtonMgr) SetVerbose(verbose bool) {
+	m.verbose = verbose
 }
