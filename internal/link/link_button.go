@@ -38,7 +38,7 @@ func (lb *LinkButton) Switch() {
 }
 
 // String return a string name with color
-func (lb *LinkButton) String() string {
+func (lb *LinkButton) Name() string {
 	return lb.strWithColor()
 }
 
@@ -144,5 +144,5 @@ func (lb *LinkButton) Operate() (models.ModifyMsg, error) {
 		return lb.linkOffOperate()
 
 	}
-	return models.MsgUnknown, fmt.Errorf("unknown link status: %s", lb.String())
+	return models.MsgUnknown, fmt.Errorf("unknown link status: %s", lb.Name())
 }

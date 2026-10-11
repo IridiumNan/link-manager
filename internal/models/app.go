@@ -1,7 +1,6 @@
 package models
 
 import (
-	"io"
 	"log"
 	"log/slog"
 	"os"
@@ -42,7 +41,8 @@ func UserHome() string {
 // SetLogger config the slog output into [LogFile]
 // Load the log file path from the configuration file
 // Remeber call the Close function for log file closure
-func SetLogger() io.Closer {
+// It return the log file with name, you can call [Name] function to get path
+func SetLogger() NameCloser {
 	dir := logDir()
 
 	err := os.MkdirAll(dir, 0o755)
@@ -53,7 +53,7 @@ func SetLogger() io.Closer {
 
 	filePath := path.Join(dir, LogFile)
 
-	f, err := os.Create(filePath)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0o644)
 	if err != nil {
 		slog.Error("error while creating log file", "err", err)
 	}

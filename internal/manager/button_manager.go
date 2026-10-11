@@ -86,7 +86,7 @@ func (m *ButtonMgr) checkBox(idx int) string {
 		mark = "*"
 	}
 
-	return fmt.Sprintf("[%v] %s\n", mark, b.String())
+	return fmt.Sprintf("[%v] %s\n", mark, b.Name())
 }
 
 // String is the implemnt for [models.Name]

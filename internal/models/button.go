@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"io"
 )
 
 type Status int
@@ -32,7 +33,7 @@ type Button interface {
 
 type Name interface {
 	// String return name without '\n'
-	String() string
+	Name() string
 }
 
 // ModifyMsg should not end with '\n'
@@ -65,4 +66,10 @@ type NameButtonOperator interface {
 
 	// do change by [Operator.Operate]
 	Operator
+}
+
+type NameCloser interface {
+	Name
+
+	io.Closer
 }

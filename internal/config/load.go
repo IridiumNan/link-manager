@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -49,18 +50,26 @@ func LoadConfigFromDirs(dirs []string) (*models.LinkConfig, error) {
 			log.Fatalf("error while creating a new configuration file, err: %s", err.Error())
 		}
 
+		slog.Info("creating a configuration file", "path", successPath)
+
 		// because the default configuration file is empty, exit directly
 		// print configuration help manual then
 		//
 		// TODO: Write a configuration help manual
 
+		fmt.Println("config the configuration file before you run this program again, path -> ", successPath)
 		os.Exit(0)
 	}
 
+	slog.Info("load configuration success, try to unmarshal")
+
 	err = viper.Unmarshal(&c)
 	if err != nil {
+		slog.Error("error while unmarshal configuration", "err", err)
 		log.Fatalf("error while unmarshal configuration: %s", err.Error())
 	}
+
+	slog.Info("unmarshal configuration success")
 
 	return &c, nil
 }
