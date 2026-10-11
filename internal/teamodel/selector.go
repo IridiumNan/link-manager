@@ -98,6 +98,9 @@ func (s *Selector) Choice() string {
 }
 
 // NewSelector chreate new selector
+//
+// You can set the header by [Selector.SetHeader]
+// and set footer by [Selector.SetFooter]
 func NewSelector(choices []string) *Selector {
 	if len(choices) == 0 {
 		return nil

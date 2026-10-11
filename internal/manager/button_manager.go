@@ -108,7 +108,7 @@ func (m *ButtonMgr) Sync() (changeMsg string, errs []error) {
 	errs = make([]error, 0, 5)
 
 	var msgCollector strings.Builder
-	msgCollector.Grow(1 << 6)
+	msgCollector.Grow(1 << 8)
 
 	for _, b := range m.buttons {
 		msg, err := b.Operate()
