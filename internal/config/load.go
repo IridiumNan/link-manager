@@ -35,8 +35,8 @@ func LoadConfigFromDirs(dirs []string) (*models.LinkConfig, error) {
 	if len(dirs) == 0 {
 		return nil, errors.New("no configuration dir provided")
 	}
+	viper.SetOptions(viper.KeyDelimiter("::"))
 
-	// TODO: Write a minimal searcher for configuration file search
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 
