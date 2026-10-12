@@ -16,6 +16,18 @@ const (
 	StatusOff
 )
 
+// StatusStr return a string based status
+func StatusStr(s Status) string {
+	switch s {
+	case StatusOff:
+		return "Status Off"
+	case StatusOn:
+		return "Status On"
+	}
+
+	return "Status None"
+}
+
 type Button interface {
 	// Switch change button's status
 	Switch()

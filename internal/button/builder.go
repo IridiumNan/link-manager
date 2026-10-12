@@ -52,12 +52,16 @@ func (b *ButtonBuilder) scan(fileName models.Name) *LinkButton {
 
 	srcBase := path.Base(name)
 	src := path.Join(b.srcDir, srcBase)
-	if mapName, ok := b.nameMap[name]; ok {
-		name = mapName
-	}
+	var dst string
 
-	dstBase := path.Base(name)
-	dst := path.Join(b.dstDir, dstBase)
+	// support dir/baseName mapping
+	if mapName, ok := b.nameMap[name]; ok {
+		dst = path.Join(b.dstDir, mapName)
+	} else {
+
+		dstBase := path.Base(name)
+		dst = path.Join(b.dstDir, dstBase)
+	}
 
 	button := NewLinkButton(src, dst)
 
@@ -75,6 +79,8 @@ func (b *ButtonBuilder) scan(fileName models.Name) *LinkButton {
 	return button
 }
 
+// Build build all buttons based on srcDir and dstDir (nameMap)
+// build by sequence
 func (b *ButtonBuilder) Build() ([]models.NameButtonOperator, error) {
 	entries, err := os.ReadDir(b.srcDir)
 
