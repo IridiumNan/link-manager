@@ -1,0 +1,9 @@
+{
+    "dir_map": {
+        "fedora": "arch",
+        "ubuntu": "arch",
+        "mint": "arch",
+        "arch": "nixos"
+    },
+    "file_map": {}
+}

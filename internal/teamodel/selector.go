@@ -10,6 +10,8 @@ import (
 
 var selectedColor = color.BgRGB(110, 110, 110)
 
+const NoChoice = -1
+
 // Selector is implement for [tea.Model]
 type Selector struct {
 	// header will be added in the [Selector.View] str head
@@ -35,6 +37,9 @@ func (s *Selector) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch msg.String() {
 		case "ctrl+c", "q":
+			// set as the invalid cursor
+			// mark as quit
+			s.cursor = NoChoice
 			return s, tea.Quit
 
 		case "up", "k":
@@ -81,11 +86,13 @@ func (s *Selector) View() tea.View {
 	str.Grow(1 << 8)
 
 	str.WriteString(s.header)
+	str.WriteString("\n\n")
 
 	for i := range s.choices {
 		str.WriteString(s.idxView(i))
 	}
 
+	str.WriteString("\n\n")
 	str.WriteString(s.footer)
 
 	return tea.NewView(str.String())
@@ -93,7 +100,12 @@ func (s *Selector) View() tea.View {
 
 // Choice return current choice
 // you should only call it when ended
+// if quit, the Choice will be emptry string
 func (s *Selector) Choice() string {
+	if s.cursor == NoChoice {
+		return ""
+	}
+
 	return s.choices[s.cursor]
 }
 

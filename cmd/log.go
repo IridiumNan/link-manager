@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 
@@ -29,7 +30,9 @@ to quickly create a Cobra application.`,
 func execLog(cmd *cobra.Command, args []string) {
 	logFile := models.SetLogger()
 
-	logFile.Close()
+	slog.Debug("starting log command")
+
+	defer logFile.Close()
 
 	fmt.Println("the logFile path -> ", logFile.Name())
 
@@ -43,6 +46,8 @@ func execLog(cmd *cobra.Command, args []string) {
 	if err := lessCmd.Run(); err != nil {
 		log.Fatal(err)
 	}
+
+	slog.Debug("log command exit without error")
 }
 
 func init() {

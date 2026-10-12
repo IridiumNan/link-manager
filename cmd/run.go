@@ -6,11 +6,13 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"log/slog"
 
 	tea "charm.land/bubbletea/v2"
 	"github.com/IridiumNan/link-manager/internal/config"
 	"github.com/IridiumNan/link-manager/internal/models"
 	"github.com/IridiumNan/link-manager/internal/teamodel"
+	"github.com/IridiumNan/link-manager/pkgs/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -31,6 +33,8 @@ func execRun(cmd *cobra.Command, args []string) {
 	// init logger
 	logFile := models.SetLogger()
 
+	slog.Debug("starting run command")
+
 	defer logFile.Close()
 
 	// load configuration file
@@ -39,19 +43,32 @@ func execRun(cmd *cobra.Command, args []string) {
 		log.Fatalf("error while loading configuration file: %s", err.Error())
 	}
 
-	dirs := make([]string, 0, len(c.DirMap))
+	choice := selectDir(utils.MapK(c.DirMap))
 
-	for dir := range c.DirMap {
-		dirs = append(dirs, dir)
+	if choice == "" {
+		slog.Info("quit dir select without change")
+
+		fmt.Print("bye")
+		return
 	}
 
-	choice := selectDir(dirs)
+	slog.Info("choose to modify link dir", "src_dir", choice, "dst_dir", c.DirMap[choice])
 
-	fmt.Printf("your choice is %s -> %s", choice, c.DirMap[choice])
+	// TODO: create a prober to probe the link status
+
+	slog.Debug("exiting run command without error")
 }
 
+// selectDir request user select a specific dirs
 func selectDir(dirs []string) string {
 	dirSelector := teamodel.NewSelector(dirs)
+
+	dirSelector.SetHeader("select the dir you want to probe or change link status")
+
+	dirSelector.SetFooter(`ctrl+c / q  to quit
+		up / k  to move cursor up
+		down / j  to move cursor down
+		enter  to choose and continue`)
 
 	p := tea.NewProgram(dirSelector)
 
