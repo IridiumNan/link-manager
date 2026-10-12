@@ -5,28 +5,26 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"log/slog"
+	"os"
 
 	tea "charm.land/bubbletea/v2"
+	"github.com/IridiumNan/link-manager/internal/button"
 	"github.com/IridiumNan/link-manager/internal/config"
+	"github.com/IridiumNan/link-manager/internal/manager"
 	"github.com/IridiumNan/link-manager/internal/models"
 	"github.com/IridiumNan/link-manager/internal/teamodel"
 	"github.com/IridiumNan/link-manager/pkgs/utils"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: execRun,
+	Short: "select then modify the link",
+	Long:  `run command run tui for you to modify link efficiently`,
+	Run:   execRun,
 }
 
 func execRun(cmd *cobra.Command, args []string) {
@@ -40,10 +38,17 @@ func execRun(cmd *cobra.Command, args []string) {
 	// load configuration file
 	c, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("error while loading configuration file: %s", err.Error())
+		slog.Error(err.Error())
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	choice := selectDir(utils.MapK(c.DirMap))
+	choice, err := selectDir(utils.MapK(c.DirMap))
+	if err != nil {
+		slog.Error(err.Error())
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	if choice == "" {
 		slog.Info("quit dir select without change")
@@ -54,13 +59,56 @@ func execRun(cmd *cobra.Command, args []string) {
 
 	slog.Info("choose to modify link dir", "src_dir", choice, "dst_dir", c.DirMap[choice])
 
-	// TODO: create a prober to probe the link status
+	b := button.NewBuilder(choice, c.DirMap[choice])
+	b.SetNameMap(c.FileMap)
+
+	err = modifyLinks(b)
+	if err != nil {
+		slog.Error(err.Error())
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	slog.Debug("exiting run command without error")
 }
 
+func modifyLinks(b *button.ButtonBuilder) error {
+	buttons, err := b.Build()
+	if err != nil {
+		return err
+	}
+
+	bMgr := manager.NewButtonMgr(buttons)
+
+	lMgr := teamodel.NewLinkManager(bMgr)
+	lMgr.SetHeader("modify below links")
+	lMgr.SetFooter(`ctrl+c / q  to quit
+		up / k to move cursor up
+		down / j to move cursor down
+		space  to modify status
+		enter  to save changes`)
+
+	p := tea.NewProgram(lMgr)
+
+	if _, err := p.Run(); err != nil {
+		return fmt.Errorf("error while modifying link status, err: %s", err.Error())
+	}
+
+	fmt.Println(lMgr.Msg)
+
+	if lMgr.Err != nil {
+		fmt.Println(lMgr.Err)
+	} else {
+		color.Green("No error")
+	}
+
+	fmt.Println("\nbye")
+
+	return nil
+}
+
 // selectDir request user select a specific dirs
-func selectDir(dirs []string) string {
+func selectDir(dirs []string) (string, error) {
 	dirSelector := teamodel.NewSelector(dirs)
 
 	dirSelector.SetHeader("select the dir you want to probe or change link status")
@@ -73,10 +121,10 @@ func selectDir(dirs []string) string {
 	p := tea.NewProgram(dirSelector)
 
 	if _, err := p.Run(); err != nil {
-		log.Fatalf("error while running dir select: %s", err.Error())
+		return "", fmt.Errorf("error while running dir select: %s", err.Error())
 	}
 
-	return dirSelector.Choice()
+	return dirSelector.Choice(), nil
 }
 
 func init() {

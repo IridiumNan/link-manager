@@ -39,8 +39,5 @@ func SetLogger() NameCloser {
 func logDir() string {
 	home := UserHome()
 
-	if home == NonePath {
-		return "."
-	}
-	return path.Join(UserHome(), ".local", "share", AppName)
+	return path.Join(home, ".local", "share", AppName)
 }

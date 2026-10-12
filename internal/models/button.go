@@ -57,7 +57,7 @@ type Operator interface {
 }
 
 type NameButtonOperator interface {
-	// visit name by [Name.String]
+	// visit name by [Name.Name]
 	Name
 
 	// change status by [Button.Switch] [Button.TurnOn] [Button.TurnOff]

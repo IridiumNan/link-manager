@@ -1,4 +1,4 @@
-package link
+package button
 
 import (
 	"fmt"
@@ -37,7 +37,12 @@ func (lb *LinkButton) Switch() {
 	}
 }
 
-// String return a string name with color
+// Status return current button status
+func (lb *LinkButton) Status() models.Status {
+	return lb.status
+}
+
+// Name return a string name with color
 func (lb *LinkButton) Name() string {
 	return lb.strWithColor()
 }
@@ -103,9 +108,9 @@ func (lb *LinkButton) linkOnOperate() (models.ModifyMsg, error) {
 		return models.NewMsg("symlink: %s created", lb.strWithouColor()), nil
 	}
 
-	if !IsSymlink(dst.Mode()) {
+	if !IsSymlink(dst) {
 		// it can be a dir, or file, DONT touch it
-		return models.NewMsg("dst %s descriptor has exist, but not a link, it's mode: %s", lb.linkDst, dst.Mode()), os.ErrExist
+		return models.NewMsg("dst %s descriptor has exist, but not a link, it's mode: %s", lb.linkDst, dst), os.ErrExist
 	}
 	return models.MsgNoChange, nil
 }
@@ -119,8 +124,8 @@ func (lb *LinkButton) linkOffOperate() (models.ModifyMsg, error) {
 		return models.MsgNoChange, nil
 	}
 
-	if !IsSymlink(dst.Mode()) {
-		return models.NewMsg("dst %s descriptor has exist, but not a link, it's mode: %s, no change apply to it", lb.linkDst, dst.Mode()), os.ErrExist
+	if !IsSymlink(dst) {
+		return models.NewMsg("dst %s descriptor has exist, but not a link, it's mode: %s, no change apply to it", lb.linkDst, dst), os.ErrExist
 	}
 
 	err = os.Remove(lb.linkDst)
@@ -144,5 +149,24 @@ func (lb *LinkButton) Operate() (models.ModifyMsg, error) {
 		return lb.linkOffOperate()
 
 	}
-	return models.MsgUnknown, fmt.Errorf("unknown link status: %s", lb.Name())
+	return models.NewMsg("unknown link status: %s", lb.Name()), nil
+}
+
+// NewLinkButton create a new link button
+// you should set status by [LinkButton.SetStatus]
+// default status is [models.StatusNone]
+func NewLinkButton(src string, dst string) *LinkButton {
+	return &LinkButton{
+		linkSrc: src,
+		linkDst: dst,
+		status:  models.StatusNone,
+	}
+}
+
+// SetStatus set this button status among
+// [models.StatusNone]
+// [models.StatusOn]
+// [models.StatusOff]
+func (lb *LinkButton) SetStatus(s models.Status) {
+	lb.status = s
 }

@@ -5,10 +5,8 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/fatih/color"
+	"github.com/IridiumNan/link-manager/internal/models"
 )
-
-var selectedColor = color.BgRGB(110, 110, 110)
 
 const NoChoice = -1
 
@@ -69,7 +67,7 @@ func (s *Selector) idxView(idx int) string {
 	if idx == s.cursor {
 		cursor = ">"
 
-		return selectedColor.Sprintf(format, cursor, s.choices[idx])
+		return models.SelectedColor.Sprintf(format, cursor, s.choices[idx])
 	}
 
 	return fmt.Sprintf(format, cursor, s.choices[idx])

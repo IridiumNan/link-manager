@@ -1,9 +1,10 @@
 {
     "dir_map": {
-        "fedora": "arch",
-        "ubuntu": "arch",
-        "mint": "arch",
-        "arch": "nixos"
+        "~/utils/bin": "~/.local/bin",
+        "~/utils/service": "~/.config/systemd/user",
+        "~/utils/config": "~/.config"
     },
-    "file_map": {}
+    "file_map": {
+        "fan_modify.sh": "fan"
+    }
 }

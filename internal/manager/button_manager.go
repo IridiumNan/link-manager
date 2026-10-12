@@ -97,7 +97,11 @@ func (m *ButtonMgr) String() string {
 	s.Grow(1 << 8)
 
 	for i := range m.buttons {
-		s.WriteString(m.checkBox(i))
+		if i == m.curr {
+			s.WriteString(models.SelectedColor.Sprintf("> %s", m.checkBox(i)))
+		} else {
+			fmt.Fprintf(&s, "  %s", m.checkBox(i))
+		}
 	}
 
 	return s.String()

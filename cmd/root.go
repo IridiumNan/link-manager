@@ -11,7 +11,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "link-manager",
+	Use:   "lm",
 	Short: "A soft link manager for Linux",
 	Long: `Link manager use bubbletea tui framework
 	That means you can manage you soft link easily`,

@@ -35,6 +35,8 @@ func LoadConfigFromDirs(dirs []string) (*models.LinkConfig, error) {
 	if len(dirs) == 0 {
 		return nil, errors.New("no configuration dir provided")
 	}
+
+	// TODO: Write a minimal searcher for configuration file search
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 
@@ -65,8 +67,7 @@ func LoadConfigFromDirs(dirs []string) (*models.LinkConfig, error) {
 
 	err = viper.Unmarshal(&c)
 	if err != nil {
-		slog.Error("error while unmarshal configuration", "err", err)
-		log.Fatalf("error while unmarshal configuration: %s", err.Error())
+		return nil, fmt.Errorf("error while unmarshal configuration, err: %s", err.Error())
 	}
 
 	slog.Info("unmarshal configuration success")

@@ -1,7 +1,7 @@
 package teamodel
 
 import (
-	"fmt"
+	"errors"
 	"log/slog"
 	"strings"
 
@@ -18,7 +18,11 @@ type LinkManager struct {
 
 	footer string
 
-	mgr manager.ButtonMgr
+	mgr *manager.ButtonMgr
+
+	Msg string
+
+	Err error
 }
 
 func (lm *LinkManager) Init() tea.Cmd {
@@ -29,10 +33,10 @@ func (lm *LinkManager) Init() tea.Cmd {
 func (lm *LinkManager) done() {
 	cm, errs := lm.mgr.Sync()
 
-	fmt.Println(cm)
+	lm.Msg = cm
 
 	if len(errs) > 0 {
-		color.Red("some errors happened on process, see log by: %s log", models.AppName)
+		lm.Err = errors.New(color.RedString("some errors happened on process, see log by: %s log", models.AppName))
 	}
 
 	for _, e := range errs {
@@ -74,7 +78,11 @@ func (lm *LinkManager) View() tea.View {
 	str.Grow(1 << 8)
 
 	str.WriteString(lm.header)
+	str.WriteString("\n\n")
+
 	str.WriteString(lm.mgr.String())
+
+	str.WriteString("\n\n")
 	str.WriteString(lm.footer)
 
 	return tea.NewView(str.String())
@@ -85,7 +93,7 @@ func (lm *LinkManager) View() tea.View {
 //
 // You can set the header by [LinkManager.SetHeader]
 // and set footer by [LinkManager.SetFooter]
-func NewLinkManager(mgr manager.ButtonMgr) *LinkManager {
+func NewLinkManager(mgr *manager.ButtonMgr) *LinkManager {
 	return &LinkManager{
 		mgr: mgr,
 	}

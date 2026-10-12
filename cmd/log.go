@@ -17,13 +17,9 @@ import (
 // logCmd represents the log command
 var logCmd = &cobra.Command{
 	Use:   "log",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Open log file with less command",
+	Long: `This command will open your log file with less, 
+	you should ues it when something wrong happened`,
 	Run: execLog,
 }
 
@@ -44,6 +40,7 @@ func execLog(cmd *cobra.Command, args []string) {
 	lessCmd.Stderr = os.Stderr
 
 	if err := lessCmd.Run(); err != nil {
+		logFile.Close()
 		log.Fatal(err)
 	}
 

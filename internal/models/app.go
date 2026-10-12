@@ -4,6 +4,8 @@ import (
 	"log"
 	"log/slog"
 	"os"
+
+	"github.com/fatih/color"
 )
 
 const (
@@ -22,8 +24,11 @@ const (
 
 var userHome string = NonePath
 
+var SelectedColor = color.BgRGB(110, 110, 110)
+
 // UserHome return path to user home dir
 // if err, it will panic
+// just use it without checking
 func UserHome() string {
 	if userHome != NonePath {
 		return userHome
