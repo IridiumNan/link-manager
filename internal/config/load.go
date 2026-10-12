@@ -76,7 +76,7 @@ func LoadConfigFromDirs(dirs []string) (*models.LinkConfig, error) {
 	}
 
 	if len(c.DirMap) == 0 {
-		return nil, errors.New(color.RedString("empty configuration content, edit it before you run this program"))
+		return &c, errors.New(color.RedString("empty configuration content, edit it before you run this program"))
 	}
 
 	slog.Info("unmarshal configuration success")
