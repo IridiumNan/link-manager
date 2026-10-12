@@ -10,9 +10,24 @@ import (
 )
 
 var expectedConf = &models.LinkConfig{
-	DirMap:  map[string]string{},
-	FileMap: map[string]string{},
+	DirMap: map[string]string{
+		"~": "~/.local",
+	},
+	FileMap: map[string]string{
+		"demo.sh": "demo",
+	},
 }
+
+var testConfigStr = `
+{
+    "dir_map": {
+        "~": "~/.local"
+    },
+    "file_map": {
+        "demo.sh": "demo"
+    }
+}
+`
 
 var testDirs = []string{
 	"config_test",
@@ -45,6 +60,30 @@ func TestLoadConfig(t *testing.T) {
 	if err == ErrInit {
 		return
 	}
+
+	err = testOnSuccessPath(successPath)
+	if err != nil {
+		t.Errorf("error while test self-written configuration, err: %s", err.Error())
+	}
+}
+
+func testOnSuccessPath(filePath string) error {
+	err := os.WriteFile(filePath, []byte(testConfigStr), 0o644)
+	if err != nil {
+		return fmt.Errorf("error while write the test configuration string into file, err: %s", err.Error())
+	}
+
+	c, err := LoadConfigFromDirs(testDirs)
+	if err != nil {
+		return fmt.Errorf("error while loading config from written file, err: %s", err.Error())
+	}
+
+	err = compareConfig(expectedConf, c)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func compareConfig(expected *models.LinkConfig, got *models.LinkConfig) error {
