@@ -94,8 +94,7 @@ func (b *ButtonBuilder) Build() ([]models.NameButtonOperator, error) {
 	if len(entries) == 0 {
 		slog.Warn("dir is empty, quit...", "dir", b.srcDir)
 
-		fmt.Printf("empty src dir: %s, quit program now\n", b.srcDir)
-		os.Exit(0)
+		return nil, fmt.Errorf("empty src dir: %s, quit program now", b.srcDir)
 	}
 
 	r := make([]models.NameButtonOperator, 0, len(entries))

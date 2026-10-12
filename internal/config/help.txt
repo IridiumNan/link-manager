@@ -1,0 +1,34 @@
+LM: link-manager configuration
+
+Configuration file name -> config.json
+
+Example:
+
+```json
+{
+    "dir_map": {
+            "~/utils/bin": "~/.local/bin",
+        "~/utils/service": "~/.config/systemd/user"
+    },
+    "file_map": {
+        "link-manager": "lm"
+    }
+}
+```
+
+If you config as this, you will choose your modify dir first (among dir_map keys)
+
+> ~/utils/bin
+  ~/utils/service
+
+Then if you press enter, all file/dir on selected dir will be scan.
+
+You can create links between the key/file -> value/file
+
+If the file name match the file_map, it the soft-link name will be replaced by this pair value
+
+For this example, if we have ~/utils/bin/link-manager, then we turn on the link, it will create ~/.local/bin/lm instead of ~/.local/bin/link-manager
+
+----------------------------------
+
+For more information, see github repository: https://github.com/IridiumNan/link-manager

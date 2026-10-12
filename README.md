@@ -2,24 +2,12 @@
 
 This is a single tool that manage system soft links conveniently.
 
-```mermaid
-graph TB
-    config_file --> groups
-    
-    groups --> |select|dir
-    dir --> |file_prober|link_buttons
-    link_buttons --> |new|manager
-    
-    manager --> program
-```
-
 The configuration file will be a single map link this
 
 ```json
 {
     "dir_map": {
-            "~/utils/bin": "~/.local/bin",
-        "~/utils/service": "~/.config/systemd/user"
+        "src_dir": "dst_dir"
     },
     "file_map": {
         "old_name": "new_name"
@@ -27,20 +15,25 @@ The configuration file will be a single map link this
 }
 ```
 
-## Steps
+> [!NOTE]
+> Just use the absolute path on configuration file
 
-- Edit the configuraion file
+## Quick Start
 
-- Start program
+- run program (it will create a new configuration file)
 
-- User select the dir
+- edit your configuration file
 
-- probe this dir then create new linkButtons
+- use `lm run` to manage or `lm install` to install all
 
-- construct new manager based on linkButtons
+---
 
-- User modify link status then `enter` for make real changes
+## Why
 
-As there is always some link share the source dir and dst dir, so manage them as group will be faster.
+As there is always some link share the src dir and dst dir, so manage them as groups will be faster.
+
+For example, you want to manage your service unit file & scripts utils across your machine.
+
+So you just assemble them on ~/utils then create soft-links to `~/.config/systemd/user/` & `~/.local/bin`
 
 And this project is powered by [buttletea](https://github.com/charmbracelet/bubbletea)

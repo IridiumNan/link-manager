@@ -13,6 +13,9 @@ import (
 //go:embed default.json
 var initJSONConf []byte
 
+//go:embed help.txt
+var initHelp string
+
 // configFullName return the default configuration file full name [models.ConfigName].[models.ConfigFormat]
 func configFullName() string {
 	return fmt.Sprintf("%s.%s", models.ConfigName, models.ConfigFormat)

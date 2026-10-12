@@ -9,6 +9,7 @@ import (
 	"path"
 
 	"github.com/IridiumNan/link-manager/internal/models"
+	"github.com/fatih/color"
 	"github.com/spf13/viper"
 )
 
@@ -16,6 +17,8 @@ import (
 // then return raw configuration struct
 
 var c models.LinkConfig
+
+var ErrInit = errors.New("init program")
 
 var defaultSearchDirs = []string{
 	".",
@@ -31,6 +34,8 @@ func LoadConfig() (*models.LinkConfig, error) {
 //
 // if all dirs have tried but not found, it will initialize a new one then exit
 // because the default configuration is empty so program can't run as expected
+//
+// if program initialize for this time, it return [ErrInit], just exit 0
 func LoadConfigFromDirs(dirs []string) (*models.LinkConfig, error) {
 	if len(dirs) == 0 {
 		return nil, errors.New("no configuration dir provided")
@@ -56,11 +61,11 @@ func LoadConfigFromDirs(dirs []string) (*models.LinkConfig, error) {
 
 		// because the default configuration file is empty, exit directly
 		// print configuration help manual then
-		//
-		// TODO: Write a configuration help manual
+		fmt.Println(initHelp)
 
-		fmt.Println("config the configuration file before you run this program again, path -> ", successPath)
-		os.Exit(0)
+		color.Green("creating an empty config file %s", successPath)
+		color.Yellow("edit empty config the file %s before you run this program again", successPath)
+		return nil, ErrInit
 	}
 
 	slog.Info("load configuration success, try to unmarshal")
@@ -68,6 +73,10 @@ func LoadConfigFromDirs(dirs []string) (*models.LinkConfig, error) {
 	err = viper.Unmarshal(&c)
 	if err != nil {
 		return nil, fmt.Errorf("error while unmarshal configuration, err: %s", err.Error())
+	}
+
+	if len(c.DirMap) == 0 {
+		return nil, errors.New(color.RedString("empty configuration content, edit it before you run this program"))
 	}
 
 	slog.Info("unmarshal configuration success")

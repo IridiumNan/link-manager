@@ -3,6 +3,7 @@ package button
 import (
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/IridiumNan/link-manager/internal/models"
 	"github.com/fatih/color"
@@ -95,6 +96,12 @@ func (lb *LinkButton) strWithColor() string {
 // linkOnOperate create sym link if link not exist
 // if link has existed, return [models.MsgNoChange]
 func (lb *LinkButton) linkOnOperate() (models.ModifyMsg, error) {
+	dir := path.Dir(lb.linkDst)
+	err := os.MkdirAll(dir, 0o755)
+	if err != nil {
+		return models.MsgNoChange, fmt.Errorf("error while creating dir for soft link, err: %s", err.Error())
+	}
+
 	dst, err := os.Lstat(lb.linkDst)
 
 	if os.IsNotExist(err) {
@@ -105,7 +112,7 @@ func (lb *LinkButton) linkOnOperate() (models.ModifyMsg, error) {
 		}
 
 		lb.TurnOn()
-		return models.NewMsg("symlink: %s created", lb.strWithouColor()), nil
+		return models.NewMsg("symlink creation: %s", lb.strWithouColor()), nil
 	}
 
 	if !IsSymlink(dst) {
@@ -133,7 +140,7 @@ func (lb *LinkButton) linkOffOperate() (models.ModifyMsg, error) {
 		return models.MsgFailed, fmt.Errorf("error while removing symlink: %s, err: %s", lb.linkDst, err.Error())
 	}
 
-	return models.NewMsg("symlink: %s has been removed", lb.strWithouColor()), nil
+	return models.NewMsg("symlink remove: %s", lb.strWithouColor()), nil
 }
 
 // Operate change the real system link based on current status

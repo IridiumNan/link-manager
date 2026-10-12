@@ -1,5 +1,5 @@
 /*
-Copyright © 2026 NAME HERE <EMAIL ADDRESS>
+Copyright © 2026 IridiumNan
 */
 package cmd
 
@@ -37,7 +37,13 @@ func execRun(cmd *cobra.Command, args []string) {
 
 	// load configuration file
 	c, err := config.LoadConfig()
+
+	if err == config.ErrInit {
+		slog.Info(err.Error())
+		return
+	}
 	if err != nil {
+
 		slog.Error(err.Error())
 		fmt.Println(err)
 		os.Exit(1)

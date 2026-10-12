@@ -51,6 +51,8 @@ func (lm *LinkManager) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch msg.String() {
 		case "ctrl+c", "q":
+			slog.Warn("quiting without any change")
+			lm.Msg = color.YellowString("quuting withou save changes")
 			return lm, tea.Quit
 
 		case "up", "k":
