@@ -11,20 +11,30 @@ import (
 
 var expectedConf = &models.LinkConfig{
 	DirMap: map[string]string{
-		"~": "~/.local",
+		"~":       "~/.local",
+		"~/utils": "~/.local/bin",
 	},
 	FileMap: map[string]string{
-		"demo.sh": "demo",
+		"demo.sh":    "demo",
+		"install.py": "install",
+		"demo1.sh":   "demo1",
+		"demo2.sh":   "demo2",
+		"demo3.sh":   "demo3",
 	},
 }
 
 var testConfigStr = `
 {
     "dir_map": {
-        "~": "~/.local"
+        "~": "~/.local",
+		"~/utils": "~/.local/bin"
     },
     "file_map": {
-        "demo.sh": "demo"
+        "demo.sh": "demo",
+        "demo1.sh": "demo1",
+        "demo2.sh": "demo2",
+        "demo3.sh": "demo3",
+		"install.py": "install"
     }
 }
 `
